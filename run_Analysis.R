@@ -43,7 +43,7 @@ write.table(tidyData, "tidy_data.txt") # write out the 1st dataset
 # Step5. Creates a second, independent tidy data set with the average of 
 # each variable for each activity and each subject. 
 
-meanData <- aggregate(x=tidyData, by=list(activities=tidyData$Activity, subj=tidyData$Subject), FUN=mean)
-meanData <- meanData[, !(colnames(meanData) %in% c("subj", "activity"))]
+meanData <- aggregate(x=tidyData, by=list(Activity=tidyData$Activity, Subject=tidyData$Subject), FUN=mean)
+meanData <- meanData[, !(colnames(meanData) %in% c("Subject", "Activity"))]
 
-write.table(meanData, "MeanData.txt") # write out the mean data.
+write.table(meanData, "MeanData.txt", row.names = FALSE) # write out the mean data.
