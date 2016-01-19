@@ -1,4 +1,4 @@
-setwd("~/Documents/Coursera/Getting and Cleaning Data")
+# setwd("~/Documents/Coursera/Getting and Cleaning Data")
 # Step1. Merges the training and the test sets to create one data set.
 # Load Train Data
 trainData <- read.table("./UCI HAR Dataset/train/X_train.txt")
@@ -31,8 +31,6 @@ names(mergeData) <- gsub("-", "", names(mergeData)) # remove "-" in col names
 # the data set
 activity <- read.table("./UCI HAR Dataset/activity_labels.txt")
 activity[, 2] <- tolower(gsub("_", "", activity[, 2]))
-substr(activity[2, 2], 8, 8) <- toupper(substr(activity[2, 2], 8, 8))
-substr(activity[3, 2], 8, 8) <- toupper(substr(activity[3, 2], 8, 8))
 activityNames <- activity[mergeNames[, 1], 2]
 mergeNames[, 1] <- activityNames
 
@@ -44,21 +42,8 @@ write.table(tidyData, "tidy_data.txt") # write out the 1st dataset
 
 # Step5. Creates a second, independent tidy data set with the average of 
 # each variable for each activity and each subject. 
-subjectLen <- length(table(mergeSub))
-activityLen <- dim(activity)[1]
-columnLen <- dim(tidyData)[2]
-result <- matrix(NA, nrow=subjectLen*activityLen, ncol=columnLen) 
-result <- as.data.frame(result)
-colnames(result) <- colnames(tidyData)
-row <- 1
-for(ii in 1:subjectLen) {
-        for(jj in 1:activityLen) {
-                result[row, 1] <- sort(unique(mergeSub)[, 1])[ii]
-                result[row, 2] <- activity[jj, 2]
-                idx1 <- ii == tidyData$subject
-                idx2 <- activity[jj, 2] == tidyData$activity
-                result[row, 3:columnLen] <- colMeans(tidyData[idx1&idx2, 3:columnLen])
-                row <- row + 1
-        }
-}
-write.table(result, "MeanData.txt") # write out the mean data.
+
+meanData <- aggregate(x=tidyData, by=list(activities=tidyData$Activity, subj=tidyData$Subject), FUN=mean)
+meanData <- meanData[, !(colnames(meanData) %in% c("subj", "activity"))]
+
+write.table(meanData, "MeanData.txt") # write out the mean data.
